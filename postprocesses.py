@@ -47,7 +47,7 @@ def punkts(tokenizer):
 
     return punkt
 
-def bagToSeq(src_sent, bag):
+def bagToSeq(src_sent, bag, punctuation):
 	labels = [0] * len(src_sent)
 	src_sent_ = src_sent.copy()
 

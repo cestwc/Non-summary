@@ -119,8 +119,8 @@ def removeWrongUnigrams(prediction, article):
 
 	return word_detokenize(strings).replace('SEPSEPSEP', '.\n')
 
-def postprocess(e, tokenizer, source_key = 'article'):
-	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']))
+def postprocess(e, tokenizer, punctuation, source_key = 'article'):
+	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']), punctuation)
 
 	prediction = tokenizer.decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
 	prediction = removeWrongUnigrams(prediction, e[source_key])

@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-def tag(e, model=model):
+def tag(e, model):
 	with torch.no_grad():
 		e['tags'] = model(torch.tensor([e['input_ids']]).to(model.device)).logits.argmax(2).cpu().tolist()[0]
 	return e

@@ -56,7 +56,7 @@ def bagToSeq(src_sent, bag, punctuation):
 		if sum(noticeable) == 0:
 			break
 
-		noticeable = list(map(lambda x: int(x in bag or x in punctuation), src_sent_))
+# 		noticeable = list(map(lambda x: int(x in bag or x in punctuation), src_sent_))
 
 
 		seg_start, seg_end = getLongestSpan(noticeable)
@@ -82,8 +82,8 @@ def bagToSeq(src_sent, bag, punctuation):
 				running = True
 			sequence.append(t)
 		else:
-			if t in punctuation:
-				sequence.append(t)
+# 			if t in punctuation:
+# 				sequence.append(t)
 			running = False
 
 	return sequence
@@ -103,7 +103,8 @@ def removeWrongUnigrams(prediction, article):
 	available = set(word_tokenize(article.lower()))
 	prediction = prediction.replace('$$$$', 'SEPSEPSEP')
 	prediction = [x for x in word_tokenize(prediction) if (x.lower() in available or x == 'SEPSEPSEP')]
-	prediction = remove_punct(word_detokenize(prediction)).split()
+	prediction = word_detokenize(prediction).split()
+# 	prediction = remove_punct(word_detokenize(prediction)).split()
 	strings = []
 	temp = []
 	for i, x in enumerate(prediction):

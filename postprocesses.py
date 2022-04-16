@@ -120,6 +120,32 @@ def removeWrongUnigrams(prediction, article):
 
 	return word_detokenize(strings).replace('SEPSEPSEP', '.\n')
 
+import spacy
+nlp = spacy.load("en_core_web_sm")
+
+def removeWrongUnigrams(prediction, article):
+	available = set([t.text for t in nlp(article.lower())])
+	prediction = prediction.replace(' $$$$ ', ' SEP ')
+
+	strings = []
+	temp = []
+	for i, x in enumerate(nlp(prediction)):
+		xt = x.text
+		if xt.lower() in available:
+			temp.append(xt)
+		if xt == 'SEP':
+			if len(temp) > 3:
+				# print(strings)
+				strings.extend(temp)
+				# strings.append('.')
+			temp = []
+		elif i == len(prediction) - 1:
+			if len(temp) > 2:
+				strings.extend(xt)
+			temp = []
+
+	return word_detokenize(strings).replace('``', '"') + ' .'
+
 def postprocess(e, tokenizer, punctuation, source_key = 'article'):
 	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']), punctuation)
 

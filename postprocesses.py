@@ -37,16 +37,6 @@ def getLongestSpan(binary_sequence):
 	segment = spans.index(max(spans))
 	return (starts[segment], ends[segment])
 
-def punkts(tokenizer):
-    punkt = set()
-    G = tokenizer.convert_ids_to_tokens(1437)
-
-    for k,v in tokenizer.vocab.items():
-        if not any(letter.isalnum() for letter in k.replace(G, '')):
-            punkt.add(v)
-
-    return punkt
-
 def bagToSeq(src_sent, bag):
 	labels = [0] * len(src_sent)
 	src_sent_ = src_sent.copy()
@@ -83,14 +73,10 @@ def bagToSeq(src_sent, bag):
 
 	return sequence
 
-import string
-table_ = str.maketrans(string.punctuation, ' '*len(string.punctuation))
-remove_punct = lambda x: ' '.join(x.translate(table_).split())
-
 import nltk
 nltk.download('punkt')
 
-from nltk.tokenize import word_tokenize, wordpunct_tokenize
+from nltk.tokenize import wordpunct_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 word_detokenize = TreebankWordDetokenizer().detokenize
 

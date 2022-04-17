@@ -95,56 +95,28 @@ remove_punct = lambda x: ' '.join(x.translate(table_).split())
 import nltk
 nltk.download('punkt')
 
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, wordpunct_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 word_detokenize = TreebankWordDetokenizer().detokenize
 
 def removeWrongUnigrams(prediction, article):
-	available = set(word_tokenize(article.lower()))
+	available = set(wordpunct_tokenize(article.lower()))
 	prediction = prediction.replace('$$$$', 'SEPSEPSEP')
-	prediction = [x for x in word_tokenize(prediction) if (x.lower() in available or x == 'SEPSEPSEP')]
-	prediction = word_detokenize(prediction).split()
-# 	prediction = remove_punct(word_detokenize(prediction)).split()
+	prediction = [x for x in wordpunct_tokenize(prediction) if (x.lower() in available or x == 'SEPSEPSEP')]
 	strings = []
 	temp = []
 	for i, x in enumerate(prediction):
 		temp.append(x)
 		if x == 'SEPSEPSEP':
-			if len(temp) > 3:
+			if len(temp) > 1:
 				strings.extend(temp)
 			temp = []
 		elif i == len(prediction) - 1:
-			if len(temp) > 2:
+			if len(temp) > 0:
 				strings.extend(temp)
 			temp = []
 
-	return word_detokenize(strings).replace('SEPSEPSEP', '.\n')
-
-import spacy
-nlp = spacy.load("en_core_web_sm")
-
-def removeWrongUnigrams(prediction, article):
-	available = set([t.text for t in nlp(article.lower())])
-	prediction = prediction.replace(' $$$$ ', ' SEP ')
-
-	strings = []
-	temp = []
-	for i, x in enumerate(nlp(prediction)):
-		xt = x.text
-		if xt.lower() in available:
-			temp.append(xt)
-		if xt == 'SEP':
-			if len(temp) > 3:
-				# print(strings)
-				strings.extend(temp)
-				# strings.append('.')
-			temp = []
-		elif i == len(prediction) - 1:
-			if len(temp) > 2:
-				strings.extend(xt)
-			temp = []
-
-	return word_detokenize(strings).replace('``', '"') + ' .'
+	return word_detokenize(strings).replace('SEPSEPSEP', '\n')
 
 def postprocess(e, tokenizer, punctuation, source_key = 'article'):
 	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']), punctuation)

@@ -47,7 +47,7 @@ def punkts(tokenizer):
 
     return punkt
 
-def bagToSeq(src_sent, bag, punctuation):
+def bagToSeq(src_sent, bag):
 	labels = [0] * len(src_sent)
 	src_sent_ = src_sent.copy()
 
@@ -55,9 +55,6 @@ def bagToSeq(src_sent, bag, punctuation):
 		noticeable = list(map(lambda x: int(x in bag), src_sent_))
 		if sum(noticeable) == 0:
 			break
-
-# 		noticeable = list(map(lambda x: int(x in bag or x in punctuation), src_sent_))
-
 
 		seg_start, seg_end = getLongestSpan(noticeable)
 		# if seg_start - seg_end > -2:
@@ -82,8 +79,6 @@ def bagToSeq(src_sent, bag, punctuation):
 				running = True
 			sequence.append(t)
 		else:
-# 			if t in punctuation:
-# 				sequence.append(t)
 			running = False
 
 	return sequence
@@ -118,8 +113,8 @@ def removeWrongUnigrams(prediction, article):
 
 	return word_detokenize(strings).replace('SEPSEPSEP', '\n')
 
-def postprocess(e, tokenizer, punctuation, source_key = 'article'):
-	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']), punctuation)
+def postprocess(e, tokenizer, source_key = 'article'):
+	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']))
 
 	prediction = tokenizer.decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
 	prediction = removeWrongUnigrams(prediction, e[source_key])

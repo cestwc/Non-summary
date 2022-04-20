@@ -3,7 +3,7 @@ import numpy as np
 
 def tag(e, model):
 	with torch.no_grad():
-		e['tags'] = model(torch.tensor([e['input_ids']]).to(model.device)).logits.argmax(2).cpu().tolist()[0]
+		e['tags'] = model(e['input_ids'].unsqueeze(0).to(model.device)).logits.argmax(2).cpu().tolist()[0]
 	return e
 
 def bagFromLabels(src, labels):

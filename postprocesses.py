@@ -89,11 +89,11 @@ def removeWrongUnigrams(prediction, article):
 	for i, x in enumerate(prediction):
 		temp.append(x)
 		if x == 'SEPSEPSEP':
-			if len(temp) > 1:
+			if len(temp) > 2:
 				strings.extend(temp)
 			temp = []
 		elif i == len(prediction) - 1:
-			if len(temp) > 0:
+			if len(temp) > 1:
 				strings.extend(temp)
 			temp = []
 

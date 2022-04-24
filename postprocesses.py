@@ -80,7 +80,7 @@ from nltk.tokenize import wordpunct_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 word_detokenize = TreebankWordDetokenizer().detokenize
 
-def removeWrongUnigrams(prediction, article):
+def removeWrongUnigrams(prediction, article, min_length):
 	available = set(wordpunct_tokenize(article.lower()))
 	prediction = prediction.replace('$$$$', 'SEPSEPSEP')
 	prediction = [x for x in wordpunct_tokenize(prediction) if (x.lower() in available or x == 'SEPSEPSEP')]
@@ -89,20 +89,20 @@ def removeWrongUnigrams(prediction, article):
 	for i, x in enumerate(prediction):
 		temp.append(x)
 		if x == 'SEPSEPSEP':
-			if len(temp) > 2:
+			if len(temp) > min_length + 1:
 				strings.extend(temp)
 			temp = []
 		elif i == len(prediction) - 1:
-			if len(temp) > 1:
+			if len(temp) > min_length:
 				strings.extend(temp)
 			temp = []
 
 	return word_detokenize(strings).replace('SEPSEPSEP', '\n')
 
-def postprocess(e, tokenizer, source_key = 'article'):
+def postprocess(e, tokenizer, source_key = 'article', min_length = 0):
 	summary_ids = bagToSeq(e['input_ids'], bagFromLabels(e['input_ids'], e['tags']))
 
 	prediction = tokenizer.decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
-	prediction = removeWrongUnigrams(prediction, e[source_key])
+	prediction = removeWrongUnigrams(prediction, e[source_key], min_length)
 	e['prediction'] = prediction
 	return e

@@ -17,7 +17,8 @@ def bagFromLabels(src, labels):
 	return {x:int(np.median(ys)) for x, ys in bag.items()}
 
 def getLongestSpan(binary_sequence):
-	assert set(binary_sequence) == {0, 1}
+	if set(binary_sequence) != {0, 1}:
+		print(binary_sequence)
 	starts = []
 	ends = []
 	running = False
